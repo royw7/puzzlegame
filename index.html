@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" text="text/class" href="style.css">
+</head>
+<body>
+  <div id="puzzle-container">
+  </div>
+  <button class="shuffle-button" onclick="shufflePuzzle()">Shuffle</button>
+  <p id="swaps"></p>
+  <script>
+      let puzzle = [];
+      let selectedPiece = null;
+      let swapCounter = 0; 
+
+      for (let i = 1; i <= 16; i++) {
+        let row = Math.floor((i - 1) / 4);
+        if (puzzle[row] === undefined) {
+          puzzle[row] = [];
+        }
+        puzzle[row].push(i);
+      }
+
+      const puzzleContainer = document.getElementById("puzzle-container");
+
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          let piece = document.createElement('div');
+          piece.classList.add('puzzle-piece');
+          piece.style.backgroundImage = `url(images/puzzle${puzzle[i][j]}.jpg)`;
+          puzzleContainer.appendChild(piece);
+        }
+      }
+
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function shufflePuzzle() {
+        swapCounter = 0
+        document.getElementById("swaps").innerHTML = "Number of Swaps:" + swapCounter;
+        puzzle = shuffle(puzzle);
+        puzzle = shuffle(puzzle);
+
+        let pieces = document.querySelectorAll('.puzzle-piece');
+        for (let i = 0; i < pieces.length; i++) {
+          let row = Math.floor(i / 4);
+          let col = i % 4;
+          pieces[i].style.backgroundImage = `url(images/puzzle${puzzle[row][col]}.jpg)`;
+        }
+      }
+
+      puzzleContainer.addEventListener('click', function(event){
+        let piece = event.target;
+        if (piece.classList.contains('puzzle-piece')) {
+          if (selectedPiece === null) {
+            selectedPiece = piece;
+            selectedPiece.classList.add('selected');
+          } else {
+            let temp = selectedPiece.style.backgroundImage;
+            selectedPiece.style.backgroundImage = piece.style.backgroundImage;
+            piece.style.backgroundImage = temp;
+            swapCounter++; 
+            document.getElementById("swaps").innerHTML = "Number of Swaps:" + swapCounter;
+            puzzle = shuffle(puzzle);
+
+            selectedPiece.classList.remove('selected');
+            selectedPiece = null;
+
+            if (isPuzzleSolved()) {
+              swapCounter = 0
+              document.getElementById("swaps").innerHTML = "Number of Swaps:" + swapCounter;
+              puzzle = shuffle(puzzle);
+              alert('Congratulations, you solved the puzzle!');
+            }
+          }
+        }
+      });
+
+      function isPuzzleSolved() {
+        let pieces = document.querySelectorAll('.puzzle-piece');
+        for (let i = 0; i < pieces.length; i++) {
+          let row = Math.floor(i / 4);
+          let col = i % 4;
+          let expectedValue = row * 4 + col + 1;
+          let actualValue = parseInt(pieces[i].style.backgroundImage.match(/puzzle(\d+).jpg/)[1]);
+          if (expectedValue !== actualValue) {
+            return false;
+          }
+        }
+        return true;
+      }
+  </script>
+</body>
+</html>
+
+ 
