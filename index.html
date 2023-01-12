@@ -37,12 +37,17 @@
       }
 
       function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          let j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
+    for (let i = 0; i < array.length; i++) {
+        for (let j = 0; j < array[i].length; j++) {
+            let row1 = Math.floor(Math.random() * array.length);
+            let col1 = Math.floor(Math.random() * array[i].length);
+            let row2 = Math.floor(Math.random() * array.length);
+            let col2 = Math.floor(Math.random() * array[i].length);
+            [array[row1][col1], array[row2][col2]] = [array[row2][col2], array[row1][col1]];
         }
-        return array;
-      }
+    }
+    return array;
+}
 
       function shufflePuzzle() {
         swapCounter = 0
